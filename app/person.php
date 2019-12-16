@@ -15,6 +15,6 @@ class person extends Model
 
     //relationship's
     public function products(){
-        return $this->belongsToMany('App\products','idProducto');
+        return $this->belongsToMany('App\product',"personProduct","idPerson","idProduct");
     }
 }

@@ -8,7 +8,7 @@ class typeProduct extends Model
 {
     //
     //table name
-    protected $table = 'product';
+    protected $table = 'typeProduct';
     //attributes
     protected $primaryKey = 'id';
     
@@ -17,6 +17,6 @@ class typeProduct extends Model
     //relationship
     public function product()
     {
-        return $this->belongsTo('App\product','idTypeProduct');
+        return $this->belongsTo("App\product","id","idTypeProduct");
     }
 }

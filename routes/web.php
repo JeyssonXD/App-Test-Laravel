@@ -10,10 +10,12 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+//default route
+Route::get('/', 'homeController@index');
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
-
-Route::get('/test/test','testController@test');
+//Product
+Route::get('/product/index','productController@index');
+Route::get('/product/create','productController@create')->name('productCreate');;
+Route::post('/product/store','productController@store');
+Route::get('/product/edit','productController@edit');
+Route::put('/product/update','productController@update');

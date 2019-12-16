@@ -16,10 +16,10 @@ class product extends Model
 
     //relationship's
     public function typeProduct(){
-        return $this->hasMany('App\typeProduct',"idTypeProduct","id");
+        return $this->hasMany('App\typeProduct',"id","idTypeProduct");
     }
 
     public function persons(){
-        return $this->belongsToMany('App\person','idPersona');
+        return $this->belongsToMany('App\person',"personProduct","idProduct","idPerson");
     }
 }
