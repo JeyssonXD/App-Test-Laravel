@@ -3,12 +3,12 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="template/concept/assets/vendor/bootstrap/css/bootstrap.min.css">
-        <link rel="stylesheet" href="template/concept/assets/vendor/fonts/circular-std/style.css" rel="stylesheet">
-        <link rel="stylesheet" href="template/concept/assets/libs/css/style.css">
-        <link rel="stylesheet" href="template/concept/assets/vendor/fonts/fontawesome/css/fontawesome-all.css">
-        <link rel="stylesheet" href="template/concept/assets/vendor/fonts/material-design-iconic-font/css/materialdesignicons.min.css">
-        <link rel="stylesheet" href="template/concept/assets/vendor/fonts/flag-icon-css/flag-icon.min.css">
+        <link rel="stylesheet" href="{{Route('homeIndex')}}/template/concept/assets/vendor/bootstrap/css/bootstrap.min.css">
+        <link rel="stylesheet" href="{{Route('homeIndex')}}/template/concept/assets/vendor/fonts/circular-std/style.css" rel="stylesheet">
+        <link rel="stylesheet" href="{{Route('homeIndex')}}/template/concept/assets/libs/css/style.css">
+        <link rel="stylesheet" href="{{Route('homeIndex')}}/template/concept/assets/vendor/fonts/fontawesome/css/fontawesome-all.css">
+        <link rel="stylesheet" href="{{Route('homeIndex')}}/template/concept/assets/vendor/fonts/material-design-iconic-font/css/materialdesignicons.min.css">
+        <link rel="stylesheet" href="{{Route('homeIndex')}}/template/concept/assets/vendor/fonts/flag-icon-css/flag-icon.min.css">
         <title>Laravel</title>
     </head>
     <body>
@@ -21,7 +21,7 @@
             <!-- ============================================================== -->
             <div class="dashboard-header">
                 <nav class="navbar navbar-expand-lg bg-white fixed-top">
-                    <a class="navbar-brand" href="index.html">App-Test</a>
+                    <a class="navbar-brand" href="{{Route('homeIndex')}}">App-Test</a>
                     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
@@ -81,7 +81,6 @@
                                         </ul>
                                     </div>
                                 </li>
-
                             </ul>
                         </div>
                     </nav>
@@ -99,23 +98,9 @@
                         <!-- ============================================================== -->
                         <!-- pageheader  -->
                         <!-- ============================================================== -->
-                        <div class="row">
-                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                                <div class="page-header">
-                                    <h2 class="pageheader-title">App Test Laravel</h2>
-                                    <p class="pageheader-text">this one aplication for recharge memory of programation in this workstation</p>
-                                    <div class="page-breadcrumb">
-                                        <nav aria-label="breadcrumb">
-                                            <ol class="breadcrumb">
-                                                <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Testing</a></li>
-                                                <li class="breadcrumb-item active" aria-current="page">Migrations</li>
-                                                <li class="breadcrumb-item active" aria-current="page">Crud's</li>
-                                            </ol>
-                                        </nav>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+
+                            @yield("Breadcumbs")
+
                         <!-- ============================================================== -->
                         <!-- end pageheader  -->
                         <!-- ============================================================== -->
@@ -127,7 +112,7 @@
                     <!-- section  content -->
                     <!-- ============================================================== -->
                     
-                    @yield('content')
+                        @yield('content')
 
                     <!-- ============================================================== -->
                     <!-- end section  content -->
@@ -143,12 +128,12 @@
         <!-- ============================================================== -->
         <!-- Optional JavaScript -->
         <!-- jquery 3.3.1 -->
-        <script src="template/concept/assets/vendor/jquery/jquery-3.3.1.min.js"></script>
+        <script src="{{Route('homeIndex')}}/template/concept/assets/vendor/jquery/jquery-3.3.1.min.js"></script>
         <!-- bootstapndle js -->
-        <script src="template/concept/assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+        <script src="{{Route('homeIndex')}}/template/concept/assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
         <!-- slimscrojs -->
-        <script src="template/concept/assets/vendor/slimscroll/jquery.slimscroll.js"></script>
+        <script src="{{Route('homeIndex')}}/template/concept/assets/vendor/slimscroll/jquery.slimscroll.js"></script>
         <!-- main js -->
-        <script src="template/concept/assets/libs/js/main-js.js"></script>
+        <script src="{{Route('homeIndex')}}/template/concept/assets/libs/js/main-js.js"></script>
     </body>
 </html>

@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\product;
+use App\TypeProduct;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+
 
 class productController extends Controller
 {
@@ -26,7 +29,9 @@ class productController extends Controller
     public function create()
     {
         //
-        return view('product.create');
+        $TypeProducts = TypeProduct::All();
+
+        return view('product.create')->with('TypeProducts',$TypeProducts);
     }
 
     /**
@@ -37,8 +42,26 @@ class productController extends Controller
      */
     public function store(Request $request)
     {
-        //
         
+
+        //validate
+        $validatedData = Validator::make($request->all(),[
+            'Name' => 'required',
+            'Price' => 'required|max:999|min:1',
+            'idTypeProduct' => 'required',
+        ]);
+
+        $validatedData->errors()->add('Name', 'Something is wrong with this field!');
+        
+        //get form
+        $model = $request->all();
+
+        //resource page
+        $TypeProducts = TypeProduct::All();
+
+        return Redirect('product/create')
+                ->with('TypeProducts',$TypeProducts)
+                ->withErrors($validatedData);
     }
 
     /**

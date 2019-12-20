@@ -131,6 +131,9 @@ return [
         'email' => [
             'unique' => 'El :attribute ya ha sido registrado.',
         ],
+        'idTypeProduct'=>[
+            'required' => 'El Tipo de producto no esta seleccionado correctamente',
+        ]
     ],
     /*
     |--------------------------------------------------------------------------
