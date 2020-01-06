@@ -7,6 +7,8 @@
 @endsection
 
 @section('content')
-  <h1>Test</h1>
+  <section class="container">
+    <h1>Test</h1>
+  </section>
 @endsection
 

@@ -23,29 +23,25 @@
                 <div class="form-row">
                   <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 mb-2">
                       <label for="validationCustom03">Name</label>
-                      <input type="text" name="Name" class="form-control" id="validationCustom03" placeholder="Name" value="{{ old('Name') }}">
+                      <input type="text" name="Name" class="form-control" id="validationCustom03" placeholder="Name" value="{{ $Name ?? '' }}">
                       <div class="invalid-feedback">
                           Name
                       </div>
-                      @error('Name')
-                        <div class="alert red-text">{{ $message }}</div>
-                      @enderror
+                      @if($errors->first('Name'))<div class="alert red-text">{{ $errors->first('Name') }}</div>@endif
                   </div>
                   <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 mb-2">
                       <label for="validationCustom04">Price</label>
-                      <input name="Price" type="number" class="form-control" id="validationCustom04" placeholder="Price" value="{{ old('Price') }}">
+                      <input name="Price" type="number" class="form-control" id="validationCustom04" placeholder="Price" value="{{ $Price ?? '' }}">
                       <div class="invalid-feedback">
                           Price
                       </div>
-                      @error('Price')
-                        <div class="alert red-text">{{ $message }}</div>
-                      @enderror
+                      @if($errors->first('Price'))<div class="alert red-text">{{ $errors->first('Price') }}</div>@endif
                   </div>
                   <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 mb-2">
                     <label for="validationCustom04">Type of Product</label>
                     <select name="idTypeProduct" class="form-control">
                         @forelse ($TypeProducts as $item)
-                            <option value="{{$item->id}}">{{$item->name}}</option>
+                            <option {{isset($idTypeProduct)?$item->id==$idTypeProduct?"selected":"":""}} value="{{$item->id}}">{{$item->name}}</option>
                         @empty
                             <option>Don't have type of product</option>
                         @endforelse
@@ -53,9 +49,7 @@
                     <div class="invalid-feedback">
                         Type Product
                     </div>
-                    @error('idTypeProduct')
-                      <div class="alert red-text">{{ $message }}</div>
-                    @enderror
+                    @if($errors->first('idTypeProduct'))<div class="alert red-text">{{ $errors->first('idTypeProduct') }}</div>@endif
                   </div>
                   <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
                       <button class="btn btn-primary" type="submit"><i class="far fa-save color-black"></i>  save</button>

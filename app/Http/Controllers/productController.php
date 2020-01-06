@@ -42,26 +42,61 @@ class productController extends Controller
      */
     public function store(Request $request)
     {
-        
+        try{
+            
+            //get form
+            $model = $request->all();
 
-        //validate
-        $validatedData = Validator::make($request->all(),[
-            'Name' => 'required',
-            'Price' => 'required|max:999|min:1',
-            'idTypeProduct' => 'required',
-        ]);
+            //validate
+            $validatedData = Validator::make($model,[
+                'Name' => 'required',
+                'Price' => 'required|max:999|min:1',
+                'idTypeProduct' => 'required',
+            ]);
 
-        $validatedData->errors()->add('Name', 'Something is wrong with this field!');
-        
-        //get form
-        $model = $request->all();
+            //custom validation
+            $productExist = product::where("name","=",$model["Name"])->first();
+            if(isset($productExist)){
+                //add custom errors
+                $validatedData->errors()->add('Name', "don't have two register equals");
+            }
 
-        //resource page
-        $TypeProducts = TypeProduct::All();
+            //model state is valid
+            if($validatedData->messages()->count()==0){
+                $product = new product;
+                //mapping data
+                $product->name = $model["Name"];
+                $product->price = $model["Price"];
+                $product->idTypeProduct = $model["idTypeProduct"];
+                //save changes
+                $product->save();
 
-        return Redirect('product/create')
-                ->with('TypeProducts',$TypeProducts)
-                ->withErrors($validatedData);
+                return view('share/messageResult',
+                            [ 'Links' => array(
+                                            "Products"=>array("Text"=>"Product","Link"=>Route('productCreate'))
+                                        ),
+                            'Title' => "Success",
+                            'Type' => 3,
+                            'Message' => "this operation is executed correctly"
+                            ]);
+            }
+
+            //resource page
+            $TypeProducts = TypeProduct::All();
+
+            return view('product/create',$model)
+                    ->with('TypeProducts',$TypeProducts)
+                    ->withErrors($validatedData);
+
+        }catch(\Exception $e){
+            //function register log
+            return view('share/messageResult',
+                        [ 
+                        'Title' => "Sorry, an error has occurred",
+                        'Type' => 0,
+                        'Message' => "this operation don't executed correctly, we working in solutions, please"
+                        ]);
+        }
     }
 
     /**
