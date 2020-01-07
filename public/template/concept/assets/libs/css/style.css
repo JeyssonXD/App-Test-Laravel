@@ -165,6 +165,8 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
+
+
 h1,
 h2,
 h3,
@@ -344,6 +346,10 @@ address {}
 
 .form-control-lg {
     padding: 12px;
+}
+
+.display-block {
+    display: block !important;
 }
 
 

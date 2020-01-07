@@ -6,6 +6,7 @@ use App\product;
 use App\TypeProduct;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use App\ViewModel\Product\viewIndex;
 
 
 class productController extends Controller
@@ -15,10 +16,62 @@ class productController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request,viewIndex $search)
     {
-        //
+        $model = $request->all();
+        //map currentFilter
+        $currentFilter = new viewIndex();
+        if($request->has("currentName")) $currentFilter->name = $model["currentName"];
+        if($request->has("currentPrice")) $currentFilter->name = $model["currentPrice"];
+        if($request->has("currentIdTypeProduct")) $currentFilter->name = $model["currentTypeProduct"];
+        
+        if($search->isValid() && !$currentFilter->isValid()){
+            $page=1;
+        }else{
+            $search = $currentFilter;
+        }
 
+        //viewBag
+        $currentFilter = $search;
+
+        //validate
+        $validatedData = Validator::make($model,[
+            'name' => 'string|nullable',
+            'price' => 'numeric|nullable',
+            'idTypeProduct' => 'numeric|nullable'
+        ]);
+
+        //first expresion
+        $query = product::with(['typeProduct']);
+
+        //model state is valid
+        if($validatedData->messages()->count()==0){
+
+            //name
+            if(isset($search->name)){
+                $query = $query->where("name","=",$search->name);
+            }
+
+            //price
+            if(isset($search->price)){
+                $query = $query->where("price","=",$search->price);
+            }
+
+            if(isset($search->idTypeProyect)){
+                //$query = $query->where("","","")
+            }
+
+        }
+
+        //paginate
+        $products = $query->paginate(3);
+
+        //resource page
+        $typeProducts = TypeProduct::All();
+
+        return view('product/index')
+                ->with("products",$products)
+                ->with("typeProducts",$typeProducts);
     }
 
     /**
@@ -43,7 +96,7 @@ class productController extends Controller
     public function store(Request $request)
     {
         try{
-            
+
             //get form
             $model = $request->all();
 
@@ -73,7 +126,7 @@ class productController extends Controller
 
                 return view('share/messageResult',
                             [ 'Links' => array(
-                                            "Products"=>array("Text"=>"Product","Link"=>Route('productCreate'))
+                                            "List of products"=>array("Text"=>"Product","Link"=>Route('productIndex'))
                                         ),
                             'Title' => "Success",
                             'Type' => 3,
@@ -108,6 +161,7 @@ class productController extends Controller
     public function show(product $product)
     {
         //
+
     }
 
     /**

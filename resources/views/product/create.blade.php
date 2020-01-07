@@ -3,7 +3,8 @@
 @section('Breadcumbs')
   @include('../share/Breadcumbs' , [ 'Links' => array(
                                             "Home"=>array("Title"=>"Home","Link"=>Route('homeIndex'),"Active"=>false),
-                                            "Product"=>array("Title"=>"Product","Link"=>Route('productCreate'),"Active"=>true)
+                                            "Product"=>array("Title"=>"Product","Link"=>Route('productIndex'),"Active"=>false),
+                                            "ProductCreate"=>array("Title"=>"New","Link"=>Route('productCreate'),"Active"=>true)
                                       )])
 @endsection
 

@@ -73,7 +73,7 @@
                                                 <a class="nav-link" href="pages/general.html"><i class="fa fa-fw fa-user"></i>Person</a>
                                             </li>
                                             <li class="nav-item">
-                                                <a class="nav-link" href="{{route('productCreate')}}"><i class="fa fa-fw fa-box"></i>Product</a>
+                                                <a class="nav-link" href="{{route('productIndex')}}"><i class="fa fa-fw fa-box"></i>Product</a>
                                             </li>
                                             <li class="nav-item">
                                                 <a class="nav-link" href="pages/listgroup.html"><i class="fa fa-fw fa-boxes"></i>Type Product</a>
