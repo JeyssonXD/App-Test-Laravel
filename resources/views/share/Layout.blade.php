@@ -135,5 +135,7 @@
         <script src="{{Route('homeIndex')}}/template/concept/assets/vendor/slimscroll/jquery.slimscroll.js"></script>
         <!-- main js -->
         <script src="{{Route('homeIndex')}}/template/concept/assets/libs/js/main-js.js"></script>
+        <!--Custom js-->
+        @yield('CustomJs')
     </body>
 </html>

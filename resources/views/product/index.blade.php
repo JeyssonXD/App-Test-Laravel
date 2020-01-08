@@ -9,31 +9,32 @@
 
 @section('content')
   <div class="container">
-  
+  <!--Form search-->
   <section class="row">
     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
       <div class="card">
         <div class="card-body">
           <form class="form-inline" action="{{ URL::ROUTE('productIndex') }}" method="GET">
             @csrf
-            <div class="form-group mb-2 display-block">
+            <div class="form-group mb-2 display-block col-2">
               <h6 >Name</h6>
-              <input type="text" placeholder="Name" class="form-control" id="name"  name="name" value="{{ $name ?? '' }}">
-              @if($errors->first('name'))<div class="alert red-text">{{ $errors->first('name') }}</div>@endif
+              <input type="text" placeholder="Name" class="form-control" id="name"  name="name" value="{{ $model?$model->name??'':''  }}">
+              @if($errors->first('name'))<h6 class="alert red-text">{{ $errors->first('name') }}</h6>@endif
             </div>
-            <div class="form-group mx-sm-3 mb-2 display-block">
+            <div class="form-group mx-sm-3 mb-2 display-block col-2">
               <h6 >Price</h6>
-              <input type="password" class="form-control" id="Price" value="{{ $price ?? '' }}" placeholder="Price">
+              <input type="number" class="form-control" id="price" name="price" value="{{ $model?$model->price??'':'' }}" placeholder="Price">
               @if($errors->first('price'))<div class="alert red-text">{{ $errors->first('price') }}</div>@endif
             </div>
-            <div class="form-group mx-sm-4 mb-2 display-block" >
+            <div class="form-group mx-sm-4 mb-2 display-block col-2" >
               <h6 >TypeProduct</h6>
               <select name="idTypeProduct" class="form-control">
-                @forelse ($typeProducts as $item)
-                    <option {{isset($idTypeProduct)?$item->id==$idTypeProduct?"selected":"":""}} value="{{$item->id}}">{{$item->name}}</option>
-                @empty
-                    <option>Don't have type of product</option>
-                @endforelse
+                    <option >Seleccione</option>
+                    @forelse ($typeProducts as $item)
+                        <option {{$model?$model->idTypeProduct?$item->id==$model->idTypeProduct?"selected":"":"":""}} value="{{$item->id}}">{{$item->name}}</option>
+                    @empty
+                        <option>Don't have type of product</option>
+                    @endforelse
               </select>
               @if($errors->first('idTypeProduct'))<div class="alert red-text">{{ $errors->first('idTypeProduct') }}</div>@endif
             </div>
@@ -43,7 +44,7 @@
       <div>
     </div>
   </section>
-
+  <!--List data-->
   <section class="row">
     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
       <div class="card">
@@ -53,7 +54,7 @@
               <table class="table table-bordered table-hover text-center">
                   <thead>
                       <tr>
-                          <th scope="col">Name</th>
+                          <th scope="col"><a class="btn btn-sm btn-primary" href="{{ route('productIndex',['sortOrder'=>$currentOrder]) }}" ><i class="fa fa-sort color-white"></i><strong class="black">Name</strong></a></th>
                           <th scope="col">Price</th>
                           <th scope="col">TypeProduct</th>
                           <th scope="col">Options</th>
@@ -85,4 +86,23 @@
   </div>
   </section>
 </div>
+
+<!--current hidden-->
+<input type="hidden" id="currentName" name="currentName" value="{{ $currentFilter?$currentFilter->name??'':'' }}" />
+<input type="hidden" id="currentPrice" name="currentPrice" value="{{ $currentFilter?$currentFilter->price??'':'' }}" />
+<input type="hidden" id="currentIdTypeProyect" name="currentIdTypeProyect" value="{{ $currentFilter?$currentFilter->idTypeProduct??'':'' }}" />
+@endsection
+
+@section("CustomJs")
+  <script type="text/javascript">
+    $(document).ready(function(){
+      //concat to url pagination current data
+      $("a.page-link").each(function(index,element){
+        var url = $(element).attr("href");
+        url = url+"&currentName="+$("#currentName").val()+"&currentPrice="+$("#currentPrice").val()+"&currentIdTypeProyect="+$("#currentIdTypeProyect").val();
+        //modify url with current data
+        $(element).attr("href",url);
+      });
+    });
+  </script>
 @endsection

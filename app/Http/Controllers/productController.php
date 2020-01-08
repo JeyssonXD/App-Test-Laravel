@@ -16,15 +16,26 @@ class productController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request,viewIndex $search)
+    public function index(Request $request)
     {
         $model = $request->all();
+        
+        //map search
+        $search = new viewIndex();
+        $search->name = $request->get('name');
+        $search->price = $request->get('price');
+        $search->idTypeProduct = $request->get('idTypeProduct');
+
         //map currentFilter
         $currentFilter = new viewIndex();
-        if($request->has("currentName")) $currentFilter->name = $model["currentName"];
-        if($request->has("currentPrice")) $currentFilter->name = $model["currentPrice"];
-        if($request->has("currentIdTypeProduct")) $currentFilter->name = $model["currentTypeProduct"];
-        
+        $currentFilter->name = $request->get("currentName");
+        $currentFilter->price = $request->get("currentPrice");
+        $currentFilter->idTypeProduct = $request->get("currentIdTypeProyect");
+
+        //map sort order
+        $sortOrder = $request->get("sortOrder")??'name_ASC';
+        $currentOrder = $sortOrder;
+
         if($search->isValid() && !$currentFilter->isValid()){
             $page=1;
         }else{
@@ -38,15 +49,15 @@ class productController extends Controller
         $validatedData = Validator::make($model,[
             'name' => 'string|nullable',
             'price' => 'numeric|nullable',
-            'idTypeProduct' => 'numeric|nullable'
+            'idTypeProduct' => 'nullable'
         ]);
 
         //first expresion
         $query = product::with(['typeProduct']);
 
-        //model state is valid
+        //model state is valid --> search
         if($validatedData->messages()->count()==0){
-
+            
             //name
             if(isset($search->name)){
                 $query = $query->where("name","=",$search->name);
@@ -57,21 +68,37 @@ class productController extends Controller
                 $query = $query->where("price","=",$search->price);
             }
 
-            if(isset($search->idTypeProyect)){
-                //$query = $query->where("","","")
+            //typeProduct
+            if(isset($search->idTypeProduct) && $search->idTypeProduct>0){
+                $query = $query->whereHas("typeProduct",function($q) use($search){
+                    $q->where("id","=",$search->idTypeProduct);
+                });
             }
+        }
 
+        //order
+        switch($sortOrder){
+            case "name_DESC":
+                $query =  $query->orderBy('name',"DESC");
+            break;
+            default:
+                $query = $query->orderBy('name',"ASC");
+            break;
         }
 
         //paginate
-        $products = $query->paginate(3);
+        $listPaginated = $query->paginate(3);
 
         //resource page
         $typeProducts = TypeProduct::All();
 
         return view('product/index')
-                ->with("products",$products)
-                ->with("typeProducts",$typeProducts);
+                ->with("model",$search)
+                ->with("products",$listPaginated)
+                ->with("typeProducts",$typeProducts)
+                ->with("currentFilter",$currentFilter)
+                ->with("currentOrder",$currentOrder)
+                ->withErrors($validatedData);
     }
 
     /**
@@ -126,7 +153,8 @@ class productController extends Controller
 
                 return view('share/messageResult',
                             [ 'Links' => array(
-                                            "List of products"=>array("Text"=>"Product","Link"=>Route('productIndex'))
+                                            "List of products"=>array("Text"=>"List of product","Link"=>Route('productIndex')),
+                                            "Create"=>array("Text"=>"Create other product","Link"=>Route('productCreate'))
                                         ),
                             'Title' => "Success",
                             'Type' => 3,
