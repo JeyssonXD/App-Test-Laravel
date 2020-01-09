@@ -35,7 +35,7 @@
                     @endswitch
                 </h2>
                 <p class="lead">{{$Message}}</p>
-                  @if(count($Links)>0)
+                  @if(isset($Links))
                     <p>you can redirect to link's recomended:</p>
                     <ul class="list-unstyled arrow">
                       @foreach ($Links as $item)

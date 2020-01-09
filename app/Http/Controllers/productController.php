@@ -7,6 +7,7 @@ use App\TypeProduct;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\ViewModel\Product\viewIndex;
+use App\Helper\Sort;
 
 
 class productController extends Controller
@@ -18,87 +19,99 @@ class productController extends Controller
      */
     public function index(Request $request)
     {
-        $model = $request->all();
+        try{
+            $model = $request->all();
         
-        //map search
-        $search = new viewIndex();
-        $search->name = $request->get('name');
-        $search->price = $request->get('price');
-        $search->idTypeProduct = $request->get('idTypeProduct');
-
-        //map currentFilter
-        $currentFilter = new viewIndex();
-        $currentFilter->name = $request->get("currentName");
-        $currentFilter->price = $request->get("currentPrice");
-        $currentFilter->idTypeProduct = $request->get("currentIdTypeProyect");
-
-        //map sort order
-        $sortOrder = $request->get("sortOrder")??'name_ASC';
-        $currentOrder = $sortOrder;
-
-        if($search->isValid() && !$currentFilter->isValid()){
-            $page=1;
-        }else{
-            $search = $currentFilter;
-        }
-
-        //viewBag
-        $currentFilter = $search;
-
-        //validate
-        $validatedData = Validator::make($model,[
-            'name' => 'string|nullable',
-            'price' => 'numeric|nullable',
-            'idTypeProduct' => 'nullable'
-        ]);
-
-        //first expresion
-        $query = product::with(['typeProduct']);
-
-        //model state is valid --> search
-        if($validatedData->messages()->count()==0){
-            
-            //name
-            if(isset($search->name)){
-                $query = $query->where("name","=",$search->name);
+            //map search
+            $search = new viewIndex();
+            $search->name = $request->get('name');
+            $search->price = $request->get('price');
+            $search->idTypeProduct = $request->get('idTypeProduct');
+    
+            //map currentFilter
+            $currentFilter = new viewIndex();
+            $currentFilter->name = $request->get("currentName");
+            $currentFilter->price = $request->get("currentPrice");
+            $currentFilter->idTypeProduct = $request->get("currentIdTypeProyect");
+    
+            //map sort order
+            $sortOrder = $request->get("sortOrder")??'name_ASC';
+    
+            if($search->isValid() && !$currentFilter->isValid()){
+                $page=1;
+            }else{
+                $search = $currentFilter;
             }
-
-            //price
-            if(isset($search->price)){
-                $query = $query->where("price","=",$search->price);
+    
+            //viewBag
+            $currentFilter = $search;
+    
+            //validate
+            $validatedData = Validator::make($model,[
+                'name' => 'string|nullable',
+                'price' => 'numeric|nullable',
+                'idTypeProduct' => 'nullable'
+            ]);
+    
+            //first expresion
+            $query = product::with(['typeProduct']);
+    
+            //model state is valid --> search
+            if($validatedData->messages()->count()==0){
+                
+                //name
+                if(isset($search->name)){
+                    $query = $query->where("name","=",$search->name);
+                }
+    
+                //price
+                if(isset($search->price)){
+                    $query = $query->where("price","=",$search->price);
+                }
+    
+                //typeProduct
+                if(isset($search->idTypeProduct) && $search->idTypeProduct>0){
+                    $query = $query->whereHas("typeProduct",function($q) use($search){
+                        $q->where("id","=",$search->idTypeProduct);
+                    });
+                }
             }
-
-            //typeProduct
-            if(isset($search->idTypeProduct) && $search->idTypeProduct>0){
-                $query = $query->whereHas("typeProduct",function($q) use($search){
-                    $q->where("id","=",$search->idTypeProduct);
-                });
+    
+            //order
+            $sortOrder = Sort::nextSort(explode("_",$sortOrder)[0],explode("_",$sortOrder)[1]);
+            $currentOrder = $sortOrder;
+    
+            switch($sortOrder){
+                case "name_ASC":
+                    $query =  $query->orderBy('name',"DESC");
+                break;
+                default:
+                    $query = $query->orderBy('name',"ASC");
+                break;
             }
+    
+            //paginate
+            $listPaginated = $query->paginate(3);
+    
+            //resource page
+            $typeProducts = TypeProduct::All();
+    
+            return view('product/index')
+                    ->with("model",$search)
+                    ->with("products",$listPaginated)
+                    ->with("typeProducts",$typeProducts)
+                    ->with("currentFilter",$currentFilter)
+                    ->with("currentOrder",$currentOrder)
+                    ->withErrors($validatedData);
+        }catch(\Exception $e){
+            //function register log
+            return view('share/messageResult',
+            [ 
+                'Title' => "Sorry, an error has occurred",
+                'Type' => 0,
+                'Message' => "this operation don't executed correctly, we working in solutions, please"
+            ]);
         }
-
-        //order
-        switch($sortOrder){
-            case "name_DESC":
-                $query =  $query->orderBy('name',"DESC");
-            break;
-            default:
-                $query = $query->orderBy('name',"ASC");
-            break;
-        }
-
-        //paginate
-        $listPaginated = $query->paginate(3);
-
-        //resource page
-        $typeProducts = TypeProduct::All();
-
-        return view('product/index')
-                ->with("model",$search)
-                ->with("products",$listPaginated)
-                ->with("typeProducts",$typeProducts)
-                ->with("currentFilter",$currentFilter)
-                ->with("currentOrder",$currentOrder)
-                ->withErrors($validatedData);
     }
 
     /**
@@ -108,10 +121,20 @@ class productController extends Controller
      */
     public function create()
     {
-        //
-        $TypeProducts = TypeProduct::All();
+        try{
+            //resource
+            $TypeProducts = TypeProduct::All();
+            return view('product.create')->with('TypeProducts',$TypeProducts);
 
-        return view('product.create')->with('TypeProducts',$TypeProducts);
+        }catch(\Exception $e){
+            //function register log
+            return view('share/messageResult',
+            [ 
+                'Title' => "Sorry, an error has occurred",
+                'Type' => 0,
+                'Message' => "this operation don't executed correctly, we working in solutions, please"
+            ]);
+        }
     }
 
     /**
@@ -180,17 +203,6 @@ class productController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\product  $product
-     * @return \Illuminate\Http\Response
-     */
-    public function show(product $product)
-    {
-        //
-
-    }
 
     /**
      * Show the form for editing the specified resource.
@@ -198,9 +210,38 @@ class productController extends Controller
      * @param  \App\product  $product
      * @return \Illuminate\Http\Response
      */
-    public function edit(product $product)
+    public function edit(request $request,$id)
     {
-        //
+        try{
+  
+            //search
+            $product  = product::where("id","=",$id)->first();
+
+            if(!isset($product)){
+                return view('share/messageResult',
+                [ 
+                    'Title' => "Resource not found",
+                    'Type' => 1,
+                    'Message' => "not found data with the params sending, if any error, please report with administrator"
+                ]);
+            }
+
+            //resource
+            $TypeProducts = TypeProduct::All();
+
+            return view('product.edit')
+                    ->with('model',$product)
+                    ->with('TypeProducts',$TypeProducts);
+
+        }catch(\Exception $e){
+            //function register log
+            return view('share/messageResult',
+            [ 
+                'Title' => "Sorry, an error has occurred",
+                'Type' => 0,
+                'Message' => "this operation don't executed correctly, we working in solutions, please"
+            ]);
+        }
     }
 
     /**
@@ -210,9 +251,80 @@ class productController extends Controller
      * @param  \App\product  $product
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, product $product)
+    public function update(request $request)
     {
-        //
+        try{
+            //error 259
+            //map product as viewmodel
+            $productModel->id = $request->get('id');
+            $productModel->name = $request->get('name');
+            $productModel->price = $request->get('price');
+            $productModel->idTypeProduct = $request->get('idTypeProduct');
+
+            if(!isset($product)){
+                return view('share/messageResult',
+                [ 
+                    'Title' => "Resource not found",
+                    'Type' => 1,
+                    'Message' => "not found data with the params sending, if any error, please report with administrator"
+                ]);
+            }
+
+            //validate
+            $validatedData = Validator::make($productModel,[
+                'Name' => 'string|required',
+                'Price' => 'numeric|required|max:999|min:1',
+                'idTypeProduct' => 'numeric|required',
+            ]);
+
+            //custom validation
+            $productExist = product::where("name","=",$productModel->name)
+                                    ->where("id","!=",$producModel->id)
+                                    ->first();
+
+            if(isset($productExist)){
+                //add custom errors
+                $validatedData->errors()->add('Name', "don't have two register equals");
+            }
+
+            if($validatedData->messages()->count()==0){
+                //search
+                $product = product::where("id","=",$productModel->id);
+                //map update
+                $product->name = $productModel->name;
+                $product->price = $productModel->price;
+                $product->idTypeProduct = $productModel->idTypeProduct;
+                //save
+                $product->save();
+
+                return view('share/messageResult',
+                        [ 'Links' => array(
+                                        "List of products"=>array("Text"=>"List of product","Link"=>Route('productIndex')),
+                                        "Create"=>array("Text"=>"Create to new product","Link"=>Route('productCreate'))
+                                    ),
+                        'Title' => "Success",
+                        'Type' => 3,
+                        'Message' => "this operation is executed correctly"
+                        ]);
+            }
+
+            //resource
+            $TypeProducts = TypeProduct::All();
+
+            return view('product.edit')
+                    ->with('model',$product)
+                    ->with('TypeProducts',$TypeProducts);
+
+        }catch(\Exception $e){
+            dd($e);
+            //function register log
+            return view('share/messageResult',
+            [ 
+                'Title' => "Sorry, an error has occurred",
+                'Type' => 0,
+                'Message' => "this operation don't executed correctly, we working in solutions, please.\n".$e->getMessage()
+            ]);
+        }
     }
 
     /**

@@ -54,7 +54,13 @@
               <table class="table table-bordered table-hover text-center">
                   <thead>
                       <tr>
-                          <th scope="col"><a class="btn btn-sm btn-primary" href="{{ route('productIndex',['sortOrder'=>$currentOrder]) }}" ><i class="fa fa-sort color-white"></i><strong class="black">Name</strong></a></th>
+                          <th scope="col"><a class="btn btn-sm btn-primary" href="{{ route('productIndex',[
+                                                                                                            'sortOrder'=>$currentOrder,
+                                                                                                            'currentName'=>$currentFilter?$currentFilter->name??'':'',
+                                                                                                            'currentPrice'=>$currentFilter?$currentFilter->price??'':'',
+                                                                                                            'currentIdTypeProyect'=>$currentFilter?$currentFilter->idTypeProduct??'':''
+                                                                                                          ]) }}">
+                                          <i class="fa fa-sort color-white"></i><strong class="black">Name</strong></a></th>
                           <th scope="col">Price</th>
                           <th scope="col">TypeProduct</th>
                           <th scope="col">Options</th>
@@ -71,7 +77,7 @@
                               Options
                             </button>
                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                              <a class="dropdown-item" href="#">Edit</a>
+                              <a class="dropdown-item" href="{{route('productEdit',['id'=>$product->id])}}">Edit</a>
                               <a class="dropdown-item" href="#">Delete</a>
                             </div>
                           </div></td>
@@ -82,27 +88,13 @@
             </div>
           </div>
       </div>
-      {{ $products->links() }}
+      {{ $products->appends([
+                            'sortOrder'=>$currentOrder,
+                            'currentName'=>$currentFilter?$currentFilter->name??'':'',
+                            'currentPrice'=>$currentFilter?$currentFilter->price??'':'',
+                            'currentIdTypeProyect'=>$currentFilter?$currentFilter->idTypeProduct??'':''
+                            ])->links() }}
   </div>
   </section>
 </div>
-
-<!--current hidden-->
-<input type="hidden" id="currentName" name="currentName" value="{{ $currentFilter?$currentFilter->name??'':'' }}" />
-<input type="hidden" id="currentPrice" name="currentPrice" value="{{ $currentFilter?$currentFilter->price??'':'' }}" />
-<input type="hidden" id="currentIdTypeProyect" name="currentIdTypeProyect" value="{{ $currentFilter?$currentFilter->idTypeProduct??'':'' }}" />
-@endsection
-
-@section("CustomJs")
-  <script type="text/javascript">
-    $(document).ready(function(){
-      //concat to url pagination current data
-      $("a.page-link").each(function(index,element){
-        var url = $(element).attr("href");
-        url = url+"&currentName="+$("#currentName").val()+"&currentPrice="+$("#currentPrice").val()+"&currentIdTypeProyect="+$("#currentIdTypeProyect").val();
-        //modify url with current data
-        $(element).attr("href",url);
-      });
-    });
-  </script>
 @endsection
