@@ -21,31 +21,31 @@
             @csrf
             @method("PUT")
             <!--Hidden input--> 
-            <input type="hidden" value="{{$model?$model->id??'':''}}" name="id" id="id"/>
+            <input type="hidden" value="{{$id??''}}" name="id" id="id"/>
             <h5 class="card-header">Edit Product</h5>
             <div class="card-body">
                 <div class="form-row">
                   <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 mb-2">
                       <label for="validationCustom03">Name</label>
-                      <input type="text" name="Name" class="form-control" id="validationCustom03" placeholder="Name" value="{{ $model?$model->name??'':'' }}">
+                      <input type="text" name="name" class="form-control" id="validationCustom03" placeholder="Name" value="{{ $name??'' }}">
                       <div class="invalid-feedback">
                           Name
                       </div>
-                      @if($errors->first('Name'))<div class="alert red-text">{{ $errors->first('Name') }}</div>@endif
+                      @if($errors->first('name'))<div class="alert red-text">{{ $errors->first('name') }}</div>@endif
                   </div>
                   <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 mb-2">
                       <label for="validationCustom04">Price</label>
-                      <input name="Price" type="number" class="form-control" id="validationCustom04" placeholder="Price" value="{{ $model?$model->price??'':'' }}">
+                      <input name="price" type="number" class="form-control" id="validationCustom04" placeholder="Price" value="{{ $price??'' }}">
                       <div class="invalid-feedback">
                           Price
                       </div>
-                      @if($errors->first('Price'))<div class="alert red-text">{{ $errors->first('Price') }}</div>@endif
+                      @if($errors->first('price'))<div class="alert red-text">{{ $errors->first('price') }}</div>@endif
                   </div>
                   <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 mb-2">
                     <label for="validationCustom04">Type of Product</label>
                     <select name="idTypeProduct" class="form-control">
                         @forelse ($TypeProducts as $item)
-                            <option {{$model?$model->idTypeProduct?$item->id==$model->idTypeProduct?"selected":"":"":""}} value="{{$item->id}}">{{$item->name}}</option>
+                            <option {{$idTypeProduct?$item->id==$idTypeProduct?"selected":"":""}} value="{{$item->id}}">{{$item->name}}</option>
                         @empty
                             <option>Don't have type of product</option>
                         @endforelse
@@ -66,3 +66,4 @@
   </div>
 </div>
 @endsection
+

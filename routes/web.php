@@ -19,4 +19,4 @@ Route::get('/product/create','productController@create')->name('productCreate');
 Route::post('/product/store','productController@store')->name('productStore');
 Route::get('/product/edit/{id}','productController@edit')->name('productEdit');
 Route::put('/product/update','productController@update')->name('productUpdate');
-Route::put('/product/Delete/{id}','productController@destroy')->name('productDelete');
+Route::GET('/product/delete','productController@destroy')->name('productDelete');

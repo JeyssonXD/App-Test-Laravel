@@ -54,6 +54,7 @@
               <table class="table table-bordered table-hover text-center">
                   <thead>
                       <tr>
+                          <th class="hidden">id</th>
                           <th scope="col"><a class="btn btn-sm btn-primary" href="{{ route('productIndex',[
                                                                                                             'sortOrder'=>$currentOrder,
                                                                                                             'currentName'=>$currentFilter?$currentFilter->name??'':'',
@@ -69,6 +70,7 @@
                   <tbody>
                         @foreach ($products as $product)
                         <tr>
+                          <td>{{ $product->id }}</td>
                           <td>{{ $product->name }}</td>
                           <td>{{ $product->price }}</td>
                           <td>{{ $product->typeProduct[0]->name}}</td>
@@ -77,8 +79,8 @@
                               Options
                             </button>
                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                              <a class="dropdown-item" href="{{route('productEdit',['id'=>$product->id])}}">Edit</a>
-                              <a class="dropdown-item" href="#">Delete</a>
+                              <a class="dropdown-item" href="{{route('productEdit',['id'=>$product->id])}}"><i class="fa fa-edit"></i> Edit</a>
+                              <button class="dropdown-item deleteProduct mouse-pointer" ><i class="fa fa-trash-alt"></i> Delete</button>
                             </div>
                           </div></td>
                         </tr>
@@ -97,4 +99,42 @@
   </div>
   </section>
 </div>
+
+<div id="modalDeleteProduct" class="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Product: <span id="modalProductname"></span></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>you  want to remove this product?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn" data-dismiss="modal">Close</button>
+        <a class="btn btn-primary" id="modalProductOk" href="{{route('productDelete')}}">Delete</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+@endsection
+
+
+@section("CustomJs")
+    <script type="text/javascript">
+        $(document).ready(function(){
+            //remove product
+            $(".deleteProduct").click(function(){
+                var id = $(this).parent().parent().parent().parent().find('td').eq(0).html();
+                var name = $(this).parent().parent().parent().parent().find('td').eq(1).html();
+                $("#modalProductName").text(name);
+                $("#modalProductOk").attr("href",$("#modalProductOk").attr("href")+"?id="+id);
+                //open modal
+                $('#modalDeleteProduct').modal('show');
+            });
+        });
+    </script>
 @endsection

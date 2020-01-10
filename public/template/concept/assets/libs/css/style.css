@@ -352,6 +352,10 @@ address {}
     display: block !important;
 }
 
+.mouse-pointer{
+    cursor: pointer!important;
+}
+
 
 /* Custom-Chekbox
 -------------------------------------------------------------- */

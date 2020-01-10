@@ -91,7 +91,7 @@ class productController extends Controller
             }
     
             //paginate
-            $listPaginated = $query->paginate(3);
+            $listPaginated = $query->paginate(5);
     
             //resource page
             $typeProducts = TypeProduct::All();
@@ -152,8 +152,8 @@ class productController extends Controller
 
             //validate
             $validatedData = Validator::make($model,[
-                'Name' => 'required',
-                'Price' => 'required|max:999|min:1',
+                'Name' => 'required|string',
+                'Price' => 'required|numeric|max:999|min:1',
                 'idTypeProduct' => 'required',
             ]);
 
@@ -229,8 +229,7 @@ class productController extends Controller
             //resource
             $TypeProducts = TypeProduct::All();
 
-            return view('product.edit')
-                    ->with('model',$product)
+            return view('product.edit',$product)
                     ->with('TypeProducts',$TypeProducts);
 
         }catch(\Exception $e){
@@ -254,53 +253,52 @@ class productController extends Controller
     public function update(request $request)
     {
         try{
-            //error 259
             //map product as viewmodel
-            $productModel->id = $request->get('id');
-            $productModel->name = $request->get('name');
-            $productModel->price = $request->get('price');
-            $productModel->idTypeProduct = $request->get('idTypeProduct');
-
-            if(!isset($product)){
-                return view('share/messageResult',
-                [ 
-                    'Title' => "Resource not found",
-                    'Type' => 1,
-                    'Message' => "not found data with the params sending, if any error, please report with administrator"
-                ]);
-            }
+            $model = $request->all();
 
             //validate
-            $validatedData = Validator::make($productModel,[
-                'Name' => 'string|required',
-                'Price' => 'numeric|required|max:999|min:1',
+            $validatedData = Validator::make($model,[
+                'id'=>'numeric|required',
+                'name' => 'string|required',
+                'price' => 'numeric|required|max:999|min:1',
                 'idTypeProduct' => 'numeric|required',
             ]);
 
-            //custom validation
-            $productExist = product::where("name","=",$productModel->name)
-                                    ->where("id","!=",$producModel->id)
-                                    ->first();
-
-            if(isset($productExist)){
-                //add custom errors
-                $validatedData->errors()->add('Name', "don't have two register equals");
-            }
-
             if($validatedData->messages()->count()==0){
+
+                //custom validation
+                $productExist = product::where("name","=",$model['name'])
+                                        ->where("id","!=",$model['id'])
+                                        ->first();
+
+                if(isset($productExist)){
+                    //add custom errors
+                    $validatedData->errors()->add('Name', "don't have two register equals");
+                }
                 //search
-                $product = product::where("id","=",$productModel->id);
+                $product = product::where("id","=",$model['id'])->first();
+
+                if(!isset($product)){
+                    return view('share/messageResult',
+                    [ 
+                        'Title' => "Resource not found",
+                        'Type' => 1,
+                        'Message' => "not found data with the params sending, if any error, please report with administrator"
+                    ]);
+                }
+
                 //map update
-                $product->name = $productModel->name;
-                $product->price = $productModel->price;
-                $product->idTypeProduct = $productModel->idTypeProduct;
+                $product->name = $model['name'];
+                $product->price = $model['price'];
+                $product->idTypeProduct = $model['idTypeProduct'];
                 //save
                 $product->save();
 
                 return view('share/messageResult',
                         [ 'Links' => array(
                                         "List of products"=>array("Text"=>"List of product","Link"=>Route('productIndex')),
-                                        "Create"=>array("Text"=>"Create to new product","Link"=>Route('productCreate'))
+                                        "Create"=>array("Text"=>"Create to new product","Link"=>Route('productCreate')),
+                                        "View"=>array("Text"=>"view data actuality","Link"=>Route('productEdit',['id'=>$product->id]))
                                     ),
                         'Title' => "Success",
                         'Type' => 3,
@@ -310,13 +308,12 @@ class productController extends Controller
 
             //resource
             $TypeProducts = TypeProduct::All();
-
-            return view('product.edit')
-                    ->with('model',$product)
-                    ->with('TypeProducts',$TypeProducts);
+            
+            return view('product.edit',$model)
+                    ->with('TypeProducts',$TypeProducts)
+                    ->withErrors($validatedData);
 
         }catch(\Exception $e){
-            dd($e);
             //function register log
             return view('share/messageResult',
             [ 
@@ -333,8 +330,52 @@ class productController extends Controller
      * @param  \App\product  $product
      * @return \Illuminate\Http\Response
      */
-    public function destroy(product $product)
+    public function destroy(request $request)
     {
-        //
+        try{
+            //
+            $id = $request->get('id');
+            if(!isset($id)){
+                return view('share/messageResult',
+                [ 
+                    'Title' => "Resource not found",
+                    'Type' => 1,
+                    'Message' => "not found data with the params sending, if any error, please report with administrator"
+                ]);
+            }
+
+            $product = product::where('id','=',$id)->first();
+
+            if(!isset($product)){
+                return view('share/messageResult',
+                [ 
+                    'Title' => "Resource not found",
+                    'Type' => 1,
+                    'Message' => "not found data with the params sending, if any error, please report with administrator"
+                ]);
+            }
+
+            //delete
+            $deleteRows = product::where("id","=",$product->id)->delete();
+
+            return view('share/messageResult',
+                    [ 'Links' => array(
+                                    "List of products"=>array("Text"=>"List of product","Link"=>Route('productIndex'))
+                                ),
+                    'Title' => "Success",
+                    'Type' => 3,
+                    'Message' => "this operation is executed correctly"
+                    ]);
+
+        }catch(\Exception $e){
+            dd($e);
+            //function register log
+            return view('share/messageResult',
+                [ 
+                    'Title' => "Sorry, an error has occurred",
+                    'Type' => 0,
+                    'Message' => "this operation don't executed correctly, we working in solutions, please.\n".$e->getMessage()
+                ]);
+        }
     }
 }
