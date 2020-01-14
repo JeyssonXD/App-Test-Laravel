@@ -76,7 +76,7 @@
                                                 <a class="nav-link" href="{{route('productIndex')}}"><i class="fa fa-fw fa-box"></i>Product</a>
                                             </li>
                                             <li class="nav-item">
-                                                <a class="nav-link" href="pages/listgroup.html"><i class="fa fa-fw fa-boxes"></i>Type Product</a>
+                                                <a class="nav-link" href="{{route('typeProductIndex')}}"><i class="fa fa-fw fa-boxes"></i>Type Product</a>
                                             </li>
                                         </ul>
                                     </div>

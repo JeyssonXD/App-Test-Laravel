@@ -356,6 +356,10 @@ address {}
     cursor: pointer!important;
 }
 
+.hidden{
+    display: none!important;
+}
+
 
 /* Custom-Chekbox
 -------------------------------------------------------------- */
