@@ -9,6 +9,8 @@
         <link rel="stylesheet" href="{{Route('homeIndex')}}/template/concept/assets/vendor/fonts/fontawesome/css/fontawesome-all.css">
         <link rel="stylesheet" href="{{Route('homeIndex')}}/template/concept/assets/vendor/fonts/material-design-iconic-font/css/materialdesignicons.min.css">
         <link rel="stylesheet" href="{{Route('homeIndex')}}/template/concept/assets/vendor/fonts/flag-icon-css/flag-icon.min.css">
+        <link rel="stylesheet" href="{{Route('homeIndex')}}/template/concept/assets/vendor/chosen/chosen.min.css">
+        @yield('CustomHeader')
         <title>Laravel</title>
     </head>
     <body>
@@ -70,7 +72,7 @@
                                     <div id="submenu-2" class="collapse submenu" style="">
                                         <ul class="nav flex-column">
                                             <li class="nav-item">
-                                                <a class="nav-link" href="pages/general.html"><i class="fa fa-fw fa-user"></i>Person</a>
+                                                <a class="nav-link" href="{{route('personIndex')}}"><i class="fa fa-fw fa-user"></i>Person</a>
                                             </li>
                                             <li class="nav-item">
                                                 <a class="nav-link" href="{{route('productIndex')}}"><i class="fa fa-fw fa-box"></i>Product</a>
@@ -135,6 +137,9 @@
         <script src="{{Route('homeIndex')}}/template/concept/assets/vendor/slimscroll/jquery.slimscroll.js"></script>
         <!-- main js -->
         <script src="{{Route('homeIndex')}}/template/concept/assets/libs/js/main-js.js"></script>
+        <!-- jquery js -->
+        <script src="{{Route('homeIndex')}}/template/concept/assets/vendor/chosen/chosen.jquery.min.js"></script>
+        <script src="{{Route('homeIndex')}}/template/concept/assets/vendor/chosen/chosen.proto.min.js"></script>
         <!--Custom js-->
         @yield('CustomJs')
     </body>

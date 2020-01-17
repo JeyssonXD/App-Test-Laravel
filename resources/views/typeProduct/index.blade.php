@@ -39,7 +39,7 @@
                       <tr>
                           <th class="hidden">id</th>
                           <th scope="col"><a class="btn btn-sm btn-primary" href="{{ route('typeProductIndex',[
-                                                                                                            'sortOrder'=>$currentOrder,
+                                                                                                            'sortOrder'=>$nextOrder,
                                                                                                             'currentName'=>$currentFilter?$currentFilter->name??'':''
                                                                                                           ]) }}">
                           <i class="fa fa-sort color-white"></i><strong class="black">Name</strong></a></th>

@@ -78,11 +78,11 @@ class productController extends Controller
             }
     
             //order
-            $sortOrder = Sort::nextSort(explode("_",$sortOrder)[0],explode("_",$sortOrder)[1]);
             $currentOrder = $sortOrder;
-    
+            $nextOrder = Sort::nextSort(explode("_",$sortOrder)[0],explode("_",$sortOrder)[1]);
+
             switch($sortOrder){
-                case "name_ASC":
+                case "name_DESC":
                     $query =  $query->orderBy('name',"DESC");
                 break;
                 default:
@@ -101,6 +101,7 @@ class productController extends Controller
                     ->with("products",$listPaginated)
                     ->with("typeProducts",$typeProducts)
                     ->with("currentFilter",$currentFilter)
+                    ->with('nextOrder',$nextOrder)
                     ->with("currentOrder",$currentOrder)
                     ->withErrors($validatedData);
         }catch(\Exception $e){

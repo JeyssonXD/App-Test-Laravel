@@ -61,8 +61,8 @@ class typeProductController extends Controller
             }
     
             //order
-            $sortOrder = Sort::nextSort(explode("_",$sortOrder)[0],explode("_",$sortOrder)[1]);
             $currentOrder = $sortOrder;
+            $nextOrder = Sort::nextSort(explode("_",$sortOrder)[0],explode("_",$sortOrder)[1]);
     
             switch($sortOrder){
                 case "name_ASC":
@@ -81,6 +81,7 @@ class typeProductController extends Controller
                     ->with("typeProducts",$listPaginated)
                     ->with("currentFilter",$currentFilter)
                     ->with("currentOrder",$currentOrder)
+                    ->with('nextOrder',$nextOrder)
                     ->withErrors($validatedData);
         }catch(\Exception $e){
             //function register log
