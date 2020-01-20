@@ -8,6 +8,7 @@ use App\person;
 use Illuminate\Support\Facades\Validator;
 use App\viewModel\person\viewIndex;
 use App\Helper\Sort;
+use Illuminate\Support\Collec;
 
 class personController extends Controller
 {
@@ -214,10 +215,38 @@ class personController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Request $request,$id)
     {
         //
-        
+        try{
+
+            $person = person::with('products')->where("id","=",$id)->first();
+
+            if(!isset($person)){
+                return view('share/messageResult',
+                [ 
+                    'Title' => "Resource not found",
+                    'Type' => 1,
+                    'Message' => "not found data with the params sending, if any error, please report with administrator"
+                ]);
+            }
+
+            //resource
+            $productList = product::All();
+            $thisProductId = collect($person->products)->map(function($product){return $product->id;});
+
+            return view('person.edit',$person)
+                        ->with('productList',$productList)
+                        ->with('products',$thisProductId);
+            
+        }catch(\exception $e){
+            return view('share/messageResult',
+            [ 
+                'Title' => "Sorry, an error has occurred",
+                'Type' => 0,
+                'Message' => "this operation don't executed correctly, we working in solutions, please"
+            ]);
+        }
     }
 
     /**
@@ -227,9 +256,71 @@ class personController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
         //
+        try{
+            //map data
+            $model= $request->all();
+
+            //validate
+            $validatedData = Validator::make($model,[
+                'name' => 'required|string',
+                'products'=>'required|array'
+            ]);
+
+            //valid exist
+            $personExist = person::where("name","=",$model['name'])
+                                  ->where("id","!=",$model['id'])->first();
+            
+            //custom error
+            if(isset($personExist)){
+                $validatedData->errors()->add("name","don't have two register equals");
+            }
+
+            if($validatedData->messages()->count()==0){
+                //search and map
+                $person = person::where('id',"=",$model['id'])->first();
+                $person->name = $model['name'];
+                //save changes
+                $person->save();
+
+                //-->products
+                //delete
+                $person->products()->detach();//save automatic
+                //add
+                $products = product::find($model['products']);
+                $person->products()->attach($products);//save automatic
+                
+                return view('share/messageResult',
+                        [ 'Links' => array(
+                                        "List of person"=>array("Text"=>"List of person","Link"=>Route('personIndex')),
+                                        "Create"=>array("Text"=>"Create other person","Link"=>Route('personCreate')),
+                                        "View data"=>array("Text"=>"View this data actuality","Link"=>Route('personEdit',['id'=>$model['id']]))
+                                    ),
+                            'Title' => "Success",
+                            'Type' => 3,
+                            'Message' => "this operation is executed correctly"
+                        ]);
+            }
+
+            //resource
+            if(!isset($request->products)){  $model["products"]= array(); }
+            $productList = product::All();
+
+            return view('person.edit',$model)
+                    ->with('products',$model['products'])
+                    ->with('productList',$productList)
+                    ->withErrors($validatedData);
+
+        }catch(\exception $e){
+            return view('share/messageResult',
+            [ 
+                'Title' => "Sorry, an error has occurred",
+                'Type' => 0,
+                'Message' => "this operation don't executed correctly, we working in solutions, please"
+            ]);
+        }
     }
 
     /**
@@ -241,5 +332,48 @@ class personController extends Controller
     public function destroy(Request $request)
     {
         //
+        try{
+            //
+            $id = $request->get('id');
+            if(!isset($id)){
+                return view('share/messageResult',
+                [ 
+                    'Title' => "Resource not found",
+                    'Type' => 1,
+                    'Message' => "not found data with the params sending, if any error, please report with administrator"
+                ]);
+            }
+
+            $person = person::where('id','=',$id)->first();
+
+            if(!isset($person)){
+                return view('share/messageResult',
+                [ 
+                    'Title' => "Resource not found",
+                    'Type' => 1,
+                    'Message' => "not found data with the params sending, if any error, please report with administrator"
+                ]);
+            }
+
+            //delete
+            $person->products()->detach();//save automatic
+            $deleteRows = person::where("id","=",$person->id)->delete();
+
+            return view('share/messageResult',
+                    [ 'Links' => array(
+                                    "List of person"=>array("Text"=>"List of person","Link"=>Route('personIndex'))
+                                ),
+                    'Title' => "Success",
+                    'Type' => 3,
+                    'Message' => "this operation is executed correctly"
+                    ]);
+        }catch(\exception $e){
+            return view('share/messageResult',
+            [ 
+                'Title' => "Sorry, an error has occurred",
+                'Type' => 0,
+                'Message' => "this operation don't executed correctly, we working in solutions, please"
+            ]);
+        }
     }
 }
