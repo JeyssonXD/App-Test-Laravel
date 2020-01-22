@@ -38,11 +38,10 @@
                                 <a class="nav-link nav-user-img" href="#" id="navbarDropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-user"></i></a>
                                 <div class="dropdown-menu dropdown-menu-right nav-user-dropdown" aria-labelledby="navbarDropdownMenuLink2">
                                     <div class="nav-user-info">
-                                        <h5 class="mb-0 text-white nav-user-name">Test user</h5>
+                                        <h5 class="mb-0 text-white nav-user-name text-center"><i class="fas fa-user mr-2"></i>{{Auth::user()->name }}</h5>
                                     </div>
-                                    <a class="dropdown-item" href="#"><i class="fas fa-user mr-2"></i>Account</a>
                                     <a class="dropdown-item" href="#"><i class="fas fa-cog mr-2"></i>Setting</a>
-                                    <a class="dropdown-item" href="#"><i class="fas fa-power-off mr-2"></i>Logout</a>
+                                    <a class="dropdown-item" href="{{route("logout")}}"><i class="fas fa-power-off mr-2"></i>Logout</a>
                                 </div>
                             </li>
                         </ul>
@@ -79,6 +78,9 @@
                                             </li>
                                             <li class="nav-item">
                                                 <a class="nav-link" href="{{route('typeProductIndex')}}"><i class="fa fa-fw fa-boxes"></i>Type Product</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" href="{{route('userRegister')}}"><i class="fa fa-fw fa-user"></i>Users</a>
                                             </li>
                                         </ul>
                                     </div>
