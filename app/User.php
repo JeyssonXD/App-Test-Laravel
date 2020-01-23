@@ -49,27 +49,32 @@ class User extends Authenticatable
         return $this->belongsToMany('App\role',"userRole","idUser","idRole");
     }
 
+    
+
     /**
      * methods 
      * 
      */
-    public function hasRole($role)
-    {
-        return null !== $this->roles()->where('name', $role)->first();
-    }
+    // public function hasRole($role)
+    // {
+    //     return null !== $this->roles()->where('name', $role)->first();
+    // }
 
     public function hasAnyRole($roles)
     {
-        return null !== $this->roles()->whereIn('name', $roles)->first();
+        $roles = explode("|",$roles);
+        $HasRoles = $this->roles()->whereIn('name', $roles)->count();
+        if($HasRoles>0) return true;
+        else return false;
     }
 
-    public function authorizeRoles($roles)
-    {
-        if (is_array($roles)) {
-            return $this->hasAnyRole($roles) || 
-                    abort(401, 'This action is unauthorized.');
-        }
-        return $this->hasRole($roles) || 
-                abort(401, 'This action is unauthorized.');
-    }
+    // public function authorizeRoles($roles)
+    // {
+    //     if (is_array($roles)) {
+    //         return $this->hasAnyRole($roles) || 
+    //                 abort(401, 'This action is unauthorized.');
+    //     }
+    //     return $this->hasRole($roles) || 
+    //             abort(401, 'This action is unauthorized.');
+    // }
 }

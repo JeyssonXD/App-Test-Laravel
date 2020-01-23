@@ -8,7 +8,7 @@
 @section('Breadcumbs')
   @include('../share/Breadcumbs' , [ 'Links' => array(
                                             "Home"=>array("Title"=>"Home","Link"=>Route('homeIndex'),"Active"=>false),
-                                            "users"=>array("Title"=>"Users","Link"=>Route('userIndex'),"Active"=>true)
+                                            "users"=>array("Title"=>"Users","Link"=>Route('userRegister'),"Active"=>true)
                                       )])
 @endsection
 

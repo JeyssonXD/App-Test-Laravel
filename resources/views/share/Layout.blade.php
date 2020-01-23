@@ -70,18 +70,26 @@
                                     <a class="nav-link" href="#" data-toggle="collapse" aria-expanded="false" data-target="#submenu-2" aria-controls="submenu-2"><i class="fa fa-fw fa-briefcase"></i>Cruds</a>
                                     <div id="submenu-2" class="collapse submenu" style="">
                                         <ul class="nav flex-column">
-                                            <li class="nav-item">
-                                                <a class="nav-link" href="{{route('personIndex')}}"><i class="fa fa-fw fa-user"></i>Person</a>
-                                            </li>
-                                            <li class="nav-item">
-                                                <a class="nav-link" href="{{route('productIndex')}}"><i class="fa fa-fw fa-box"></i>Product</a>
-                                            </li>
-                                            <li class="nav-item">
-                                                <a class="nav-link" href="{{route('typeProductIndex')}}"><i class="fa fa-fw fa-boxes"></i>Type Product</a>
-                                            </li>
-                                            <li class="nav-item">
-                                                <a class="nav-link" href="{{route('userRegister')}}"><i class="fa fa-fw fa-user"></i>Users</a>
-                                            </li>
+                                            @if(Auth::user()->hasAnyRole("Administrator|Managment"))
+                                                <li class="nav-item">
+                                                    <a class="nav-link" href="{{route('personIndex')}}"><i class="fa fa-fw fa-user"></i>Person</a>
+                                                </li>
+                                            @endif
+                                            @if(Auth::user()->hasAnyRole("Administrator|Managment"))
+                                                <li class="nav-item">
+                                                    <a class="nav-link" href="{{route('productIndex')}}"><i class="fa fa-fw fa-box"></i>Product</a>
+                                                </li>   
+                                            @endif
+                                            @if(Auth::user()->hasAnyRole("Administrator|Managment"))
+                                                <li class="nav-item">
+                                                    <a class="nav-link" href="{{route('typeProductIndex')}}"><i class="fa fa-fw fa-boxes"></i>Type Product</a>
+                                                </li>
+                                            @endif
+                                            @if(Auth::user()->hasAnyRole("Administrator"))
+                                                <li class="nav-item">
+                                                    <a class="nav-link" href="{{route('userRegister')}}"><i class="fa fa-fw fa-user"></i>Users</a>
+                                                </li>
+                                            @endif
                                         </ul>
                                     </div>
                                 </li>
